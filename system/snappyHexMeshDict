@@ -33,11 +33,12 @@ geometry
         type triSurfaceMesh;
         file "airfoil.stl";
     }
-    bounding_box
+    bounding_circle
     {
-        type box;
-        min  (0.9 0.4 0);
-        max  (1.3 0.6 1);
+        type cylinder;
+        point1 (1.0 0 0.5);
+	point2 (1.0 1.0 0.5);
+	radius 0.15;
     }
 }
 
@@ -103,7 +104,7 @@ castellatedMeshControls
         NACA0018
         {
             // Surface-wise min and max refinement level
-            level (4 4);
+            level (3 4);
 
             // Optional specification of patch type (default is wall). No
             // constraint types (cyclic, symmetry) etc. are allowed.
@@ -133,30 +134,18 @@ castellatedMeshControls
 
     refinementRegions
     {
-//        bounding_box
-//        {
-//            mode        inside;
+        bounding_circle
+        {
+		mode inside;
+		levels ((1.0 4));
+	}
 
-            // Disable uniform refinement
-//            levels      ((1.0 4));
-
-            // Optional: directional refinement
-            // (after all other refinement). Directional refinement
-            // for all cells according to 'mode' ('inside' or 'outside';
-            // 'distance' not supported) and within certain range. E.g.
-            //  - for all cells with level 0-1
-            //  - do one split in y and z direction. Note:the resulting mesh is
-            //    no longer compatible with e.g. dynamic
-            //    refinement/unrefinement.
-            //levelIncrement  (0 1 (0 1 1));
-//        }
 	NACA0018
 	{
 		mode distance;
 		levels
 		(
 			(0.05 4)
-			(1.0 3)
 		);
 	}
     }

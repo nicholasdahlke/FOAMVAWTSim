@@ -29,4 +29,6 @@ Reconstruct the mesh
 
 ```reconstructParMesh -mergeTol 1e-06 -latestTime```
 
+Run mesh quality check
 
+```checkMesh```
