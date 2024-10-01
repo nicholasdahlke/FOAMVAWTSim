@@ -30,8 +30,18 @@ airfoil.stl
 
     // Write options
 
-        // Write features to obj format for postprocessing
-        writeObj                no;
+    // Write features to obj format for postprocessing
+    writeObj                no;
+}
+
+AMI.stl
+{
+	extractionMethod extractFromSurface;
+	extractFromSurfaceCoeffs
+	{
+		includedAngle 150;
+	}
+	writeObj no;
 }
 
 

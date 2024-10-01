@@ -17,7 +17,7 @@ FoamFile
 // Which of the steps to run
 castellatedMesh true;
 snap            true;
-addLayers       false;
+addLayers       true;
 
 
 // Geometry. Definition of all surfaces. All surfaces are of class
@@ -33,12 +33,11 @@ geometry
         type triSurfaceMesh;
         file "airfoil.stl";
     }
-    bounding_circle
+
+    AMI
     {
-        type cylinder;
-        point1 (1.0 0 0.5);
-	point2 (1.0 1.0 0.5);
-	radius 0.15;
+    	type triSurfaceMesh;
+	file "AMI.stl";
     }
 }
 
@@ -53,14 +52,14 @@ castellatedMeshControls
     // If local number of cells is >= maxLocalCells on any processor
     // switches from from refinement followed by balancing
     // (current method) to (weighted) balancing before refinement.
-    maxLocalCells 100000;
+    maxLocalCells 1000000;
 
     // Overall cell limit (approximately). Refinement will stop immediately
     // upon reaching this number so a refinement level might not complete.
     // Note that this is the number of cells before removing the part which
     // is not 'visible' from the keepPoint. The final number of cells might
     // actually be a lot less.
-    maxGlobalCells 2000000;
+    maxGlobalCells 10000000;
 
     // The surface refinement loop might spend lots of iterations refining just
     // a few cells. This setting will cause refinement to stop
@@ -113,6 +112,15 @@ castellatedMeshControls
                 type        wall;
             }
         }
+
+	AMI
+	{
+	     level (2 2);
+	     faceType boundary;
+	     cellZone rotatingZone;
+	     faceZone rotatingZone;
+	     cellZoneInside inside;
+	}
     }
 
     // Resolve sharp angles on fridges
@@ -134,10 +142,13 @@ castellatedMeshControls
 
     refinementRegions
     {
-        bounding_circle
-        {
+	AMI
+	{
 		mode inside;
-		levels ((1.0 4));
+		levels
+		(
+			(1E15 2)
+		);
 	}
 
 	NACA0018
@@ -145,10 +156,10 @@ castellatedMeshControls
 		mode distance;
 		levels
 		(
-			(0.05 4)
+			(0.03 3)
 		);
 	}
-    }
+     }
 
 
     // Mesh selection
@@ -210,40 +221,32 @@ addLayersControls
 {
     // Are the thickness parameters below relative to the undistorted
     // size of the refined cell outside layer (true) or absolute sizes (false).
-    relativeSizes true;
+    relativeSizes false;
 
     // Per final patch (so not geometry!) the layer information
     layers
     {
-        "two.*"
+        NACA0018
         {
-            nSurfaceLayers 3;
-        }
-        ground
-        {
-            nSurfaceLayers 3;
-        }
-        igloo
-        {
-            nSurfaceLayers 1;
+            nSurfaceLayers 16;
         }
     }
 
     // Expansion factor for layer mesh
-    expansionRatio 1.0;
+    expansionRatio 1.15;
 
     // Wanted thickness of final added cell layer. If multiple layers
     // is the thickness of the layer furthest away from the wall.
     // Relative to undistorted size of cell outside layer.
     // See relativeSizes parameter.
-    finalLayerThickness 0.5;
+    //finalLayerThickness 0.03;
 
     // Minimum thickness of cell layer. If for any reason layer
     // cannot be above minThickness do not add layer.
     // Relative to undistorted size of cell outside layer.
     // See relativeSizes parameter.
-    minThickness 0.05;
-
+    firstLayerThickness 0.005;
+    minThickness 1e-5;
     // If points get not extruded do nGrow layers of connected faces that are
     // also not grown. This helps convergence of the layer addition process
     // close to features.
@@ -271,13 +274,12 @@ addLayersControls
 
     //- Use displacementMotionSolver to shrink mesh
     meshShrinker displacementMotionSolver;
-
+    //meshShrinker displacementMedialAxis;
     //- Use laplacian for shrinking
     solver displacementLaplacian;
-
     displacementLaplacianCoeffs
     {
-        diffusivity quadratic inverseDistance ("two.*" igloo);
+        diffusivity quadratic inverseDistance (NACA0018);
     }
 
 
@@ -287,7 +289,8 @@ addLayersControls
     // Overall max number of layer addition iterations. The mesher will exit
     // if it reaches this number of iterations; possibly with an illegal
     // mesh.
-    nLayerIter 50;
+    nLayerIter 30;
+    nOuterIter 4;
 }
 
 

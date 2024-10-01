@@ -23,11 +23,15 @@ Decompose the case for parallel processing
 
 Run the case in parallel on 24 threads
 
-```mpirun --use-hwthread-cpus -np 24 snappyHexMesh -parallel```
+```mpirun --use-hwthread-cpus -np 24 snappyHexMesh -overwrite -parallel```
 
 Reconstruct the mesh
 
 ```reconstructParMesh -mergeTol 1e-06 -latestTime```
+
+Use the createPatch utility to change the patch types to AMI to allow information transfer along the rotating mesh boundary
+
+```createPatch```
 
 Run mesh quality check
 
