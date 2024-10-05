@@ -27,12 +27,16 @@ Run the case in parallel on 24 threads
 
 Reconstruct the mesh
 
-```reconstructParMesh -mergeTol 1e-06 -latestTime```
+```reconstructParMesh -mergeTol 1e-06 -constant```
+
+Renumber the mesh
+
+```renumberMesh -overwrite -constant```
 
 Use the createPatch utility to change the patch types to AMI to allow information transfer along the rotating mesh boundary
 
-```createPatch```
+```createPatch -overwrite```
 
 Run mesh quality check
 
-```checkMesh```
+```checkMesh -constant```

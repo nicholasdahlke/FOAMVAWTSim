@@ -10,12 +10,15 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      meshQualityDict;
+    object      flappingProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-// Include defaults parameters from master dictionary
-#includeEtc "caseDicts/meshQualityDict"
+// Flapping frequency in Hz
+frequency	10;
+
+// Flapping amplitude in deg
+amplitude	30;
 
 
 // ************************************************************************* //
